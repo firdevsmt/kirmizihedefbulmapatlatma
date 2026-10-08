@@ -6,7 +6,7 @@ import winsound
 
 
 def ses_cal(frekans, sure_ms):
-  # FPS düşüşünü engellemek için daemon thread kullanıyoruz
+  # FPS düşüşünü engellemek için daemon thread 
   threading.Thread(
       target=winsound.Beep, args=(frekans, sure_ms), daemon=True
   ).start()
@@ -63,7 +63,7 @@ while cap.isOpened():
       hata_x = hedef_x - ekran_merkez_x
       hata_y = hedef_y - ekran_merkez_y
 
-      # Deadzone kontrolü
+      # deadzone kontrolü
       if abs(hata_x) <= ESIK and abs(hata_y) <= ESIK:
         hedef_kilitte = True
 
@@ -72,7 +72,7 @@ while cap.isOpened():
 
   suan = time.time()
 
-  # KİLİTLENME VE ATEŞLEME DURUMU
+  # kilitlenme ve ateşlene
   if hedef_kilitte:
     if kilit_baslangic is None:
       kilit_baslangic = suan
@@ -86,7 +86,7 @@ while cap.isOpened():
         ses_cal(1500, 500)
         atis_yapildi = True
 
-      # Atış anı kilit çemberi (Sabit yeşil halka)
+      # Atış anı kilit çemberi sbt yeşil halka
       if hedef_konum:
         cv2.circle(frame, hedef_konum, 20, (0, 255, 0), 2)
 
@@ -100,7 +100,7 @@ while cap.isOpened():
           3,
       )
     else:
-      # GERİ SAYIM SÜRÜYOR: KÜÇÜLEN HUD ÇEMBERİ
+      # geri sayımın sürmesi ve küçülen hud çemberi
       kalan_oran = (HEDEF_SURE - gecen_sure) / HEDEF_SURE
       yaricap = int(20 + 40 * kalan_oran)  # 60 pikselden 20 piksele doğru daralır
 
@@ -108,7 +108,7 @@ while cap.isOpened():
         cv2.circle(frame, hedef_konum, yaricap, (0, 255, 0), 2)
         cv2.drawMarker(frame, hedef_konum, (0, 255, 0), cv2.MARKER_CROSS, 10, 1)
 
-      # Ritmik geri sayım bipi (çakışmayı önlemek için 1.7 saniyeye kadar)
+      # ritmik geri sayım bipi çakışmayı önlemek için 1.7 saniyeye kadar
       if (suan - son_bip_zamani > 0.4) and (gecen_sure < 1.7):
         ses_cal(900, 70)
         son_bip_zamani = suan
@@ -125,8 +125,7 @@ while cap.isOpened():
       )
 
   else:
-    # HEDEF KAÇTI / KİLİT KAYBI KONTROLÜ
-    # Eğer geri sayım başlamıştı ama atış yapılmadan hedef kaçtıysa:
+    # geri sayım başlamıştı ama atış yapılmadan hedef kaçtıysa
     if kilit_baslangic is not None and not atis_yapildi:
       ses_cal(400, 150)  # Kalın 'kilit kaybı' alarmı
 
@@ -142,7 +141,7 @@ while cap.isOpened():
         2,
     )
 
-  # Ekran Merkezi Nişangahı ve Deadzone Kutusu
+  # ekran merkezi nişangahı ve deadzone box
   cv2.drawMarker(frame, ekran_merkezi, (255, 0, 0), cv2.MARKER_CROSS, 20, 2)
   cv2.rectangle(
       frame,
